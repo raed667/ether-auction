@@ -15,7 +15,8 @@ const useStyles = makeStyles({
     marginBottom: 16,
     maxWidth: 260,
     minWidth: 100
-  }
+  },
+  link: { textDecoration: "none", color: "#000" }
 });
 
 export const ArticleCard = ({ article }) => {
@@ -25,16 +26,13 @@ export const ArticleCard = ({ article }) => {
   return (
     <Card className={classes.card}>
       <CardActionArea>
-        <Link
-          to={"/article/" + id}
-          style={{ textDecoration: "none", color: "#000" }}
-        >
+        <Link to={"/article/" + id} className={classes.link}>
           <CardMedia
-            component="img"
             alt={title}
             title={title}
-            height="140"
             image={img}
+            component="img"
+            height="140"
           />
 
           <CardContent>

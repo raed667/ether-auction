@@ -20,7 +20,8 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     flexGrow: 1
-  }
+  },
+  link: { textDecoration: "none", color: "#FFF" }
 }));
 
 export const TopBar = ({ accounts }) => {
@@ -41,12 +42,14 @@ export const TopBar = ({ accounts }) => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            <Link to="/" style={{ textDecoration: "none", color: "#FFF" }}>
+            <Link to="/" className={classes.link}>
               λ Auctions
             </Link>
           </Typography>
           <Button color="inherit" onClick={connect}>
-            {accounts.length ? accounts[0].substring(0, 6) : "Login"}
+            {accounts.length
+              ? `${accounts[0].substring(0, 6)} (${accounts.length})`
+              : "Login"}
           </Button>
         </Toolbar>
       </AppBar>

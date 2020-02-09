@@ -12,7 +12,8 @@ const useStyles = makeStyles(theme => ({
   button: {
     marginTop: 8,
     borderRadius: 0
-  }
+  },
+  empty: { height: 350 }
 }));
 
 export const HomePage = ({ articles }) => {
@@ -23,7 +24,7 @@ export const HomePage = ({ articles }) => {
       {articles.length === 0 && (
         <Typography variant="h6" color="textSecondary" align="center">
           <div>
-            <img alt="empty" style={{ height: 350 }} src="/empty.svg" />
+            <img alt="empty" className={classes.empty} src="/empty.svg" />
           </div>
           No articles found
         </Typography>

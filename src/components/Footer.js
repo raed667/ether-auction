@@ -18,8 +18,8 @@ export const Footer = () => {
       align="center"
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://github.com/Raedslab">
-        Raed
+      <Link color="inherit" href="https://github.com/RaedsLab/ether-auction">
+        Raed Chammam
       </Link>{" "}
       {new Date().getFullYear()}
     </Typography>

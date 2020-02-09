@@ -5,12 +5,16 @@ import { IPFS_URL } from "../helpers/ipfs";
 import web3 from "../helpers/web3";
 import ipfs from "../helpers/ipfs";
 
+/** IPFS */
+
 const getArticleData = async ipfsData => {
   const { data } = await axios.get(IPFS_URL + ipfsData);
   return data;
 };
 
 const getArticleImageLink = ipfsImage => IPFS_URL + ipfsImage;
+
+/** Contract */
 
 export const getNumberOfArticles = async () => {
   try {
@@ -46,7 +50,7 @@ export const getStandingBid = async articleId => {
       value
     };
   } catch (err) {
-    console.warn(err);
+    console.warn({ articleId }, err);
     return null;
   }
 };
@@ -75,13 +79,13 @@ const uploadArticleIPFS = async (title, description, imageFile) => {
       })
     },
     {
-      path: "/article.png",
+      path: "/article.jpg",
       content: imageFile
     }
   ];
 
   for await (const result of ipfs.add(files)) {
-    if (result.path === "article.png") {
+    if (result.path === "article.jpg") {
       articleIpfs.image = web3.utils.asciiToHex(result.cid.string);
     }
     if (result.path === "article.json") {
