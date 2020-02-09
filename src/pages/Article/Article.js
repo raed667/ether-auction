@@ -45,8 +45,10 @@ export const Article = ({ article, accounts }) => {
   React.useEffect(() => {
     getRate().then(r => setRate(r));
     getStandingBid(id).then(bid => {
-      setStandingBid(bid);
-      setUserBid(bid.value);
+      if (bid) {
+        setStandingBid(bid);
+        setUserBid(bid.value);
+      }
     });
   }, [id]);
 
@@ -56,7 +58,10 @@ export const Article = ({ article, accounts }) => {
     try {
       const result = await bidOnArticle(id, userBid, user);
       if (result.transactionHash) {
-        setStatus({ status: "success", success: result.transactionHash });
+        setStatus({
+          status: "success",
+          message: "Bid success: " + result.transactionHash
+        });
       }
     } catch (err) {
       setStatus({ status: "error", message: err.message });

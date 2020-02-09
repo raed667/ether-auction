@@ -6,6 +6,7 @@ import {
   Button,
   CircularProgress
 } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/core/styles";
 import { DropzoneArea } from "material-ui-dropzone";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -37,7 +38,9 @@ export const AddArticle = ({ accounts }) => {
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [image, setImage] = React.useState(null);
+
   const [submitting, setSubmitting] = React.useState(false);
+  const [status, setStatus] = React.useState(null);
 
   const onFileChange = async files => {
     if (files && files[0]) {
@@ -57,16 +60,22 @@ export const AddArticle = ({ accounts }) => {
     }
     setSubmitting(true);
     try {
-      const response = await listArticle(title, description, image, user);
-      console.log({ response });
+      const result = await listArticle(title, description, image, user);
+      if (result.transactionHash) {
+        setStatus({
+          status: "success",
+          message: "Listing success: " + result.transactionHash
+        });
+      }
     } catch (err) {
-      console.warn(err);
+      setStatus({ status: "error", message: err.message });
     }
     setSubmitting(false);
   };
 
   return (
     <div>
+      {!!status && <Alert severity={status.status}>{status.message}</Alert>}
       <Typography variant="h6" gutterBottom>
         Sell an item
       </Typography>

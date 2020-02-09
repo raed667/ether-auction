@@ -25,7 +25,6 @@ export const getNumberOfArticles = async () => {
 export const getArticle = async id => {
   try {
     const article = await contract.methods.articles(id).call();
-
     const { title, description } = await getArticleData(
       web3.utils.hexToAscii(article.data)
     );
@@ -95,11 +94,10 @@ const uploadArticleIPFS = async (title, description, imageFile) => {
 
 export const listArticle = async (title, description, imageFile, user) => {
   const article = await uploadArticleIPFS(title, description, imageFile);
-  console.log({ article });
   const response = await contract.methods
     .addArticle(article.data, article.image)
     .send({
       from: user
     });
-  console.log({ response });
+  return response;
 };
