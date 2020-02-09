@@ -8,13 +8,16 @@ import {
   TextField,
   InputAdornment
 } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert";
 import Icon from "@material-ui/icons/AddShoppingCart";
 import { makeStyles } from "@material-ui/core/styles";
 
+import { Winner } from "../../components/Winner";
+
 import { getRate } from "../../helpers/rates";
+import { getStandingBid, bidOnArticle } from "../../data";
 
 const useStyles = makeStyles(theme => ({
-  root: {},
   img: {
     width: "100%"
   },
@@ -24,39 +27,51 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const Article = () => {
+export const Article = ({ article, accounts }) => {
   const classes = useStyles();
   const { id } = useParams();
+  const user = accounts[0];
 
-  const [price, setPrice] = React.useState(0);
-  const [rate, setRate] = React.useState(0);
-  const [article, setArticle] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [status, setStatus] = React.useState(null);
+  const [userBid, setUserBid] = React.useState(0);
+  const [rate, setRate] = React.useState(1);
 
-  const geArticle = async id => {
-    return {
-      title: "Supreme",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec scelerisque viverra lobortis.",
-      image: "/supreme.jpg",
-      price: 150
-    };
-  };
+  const [standingBid, setStandingBid] = React.useState({
+    user: null,
+    value: 0
+  });
 
   React.useEffect(() => {
-    geArticle(id).then(a => {
-      setArticle(a);
-      setPrice(a.price);
-    });
     getRate().then(r => setRate(r));
+    getStandingBid(id).then(bid => {
+      setStandingBid(bid);
+      setUserBid(bid.value);
+    });
   }, [id]);
 
-  if (!article) return <div>loading</div>;
+  const onBid = async () => {
+    setIsLoading(true);
+    setStatus(null);
+    try {
+      const result = await bidOnArticle(id, userBid, user);
+      if (result.transactionHash) {
+        setStatus({ status: "success", success: result.transactionHash });
+      }
+    } catch (err) {
+      setStatus({ status: "error", message: err.message });
+    }
+    setIsLoading(false);
+  };
+
+  if (!article) return <div>Loading</div>;
 
   return (
     <div>
+      {!!status && <Alert severity={status.status}>{status.message}</Alert>}
       <Grid container spacing={3}>
         <Grid item md={8}>
-          <img alt="title" className={classes.img} src={article.image} />
+          <img alt={article.title} className={classes.img} src={article.img} />
         </Grid>
         <Grid
           item
@@ -74,9 +89,13 @@ export const Article = () => {
               component="span"
               color="textSecondary"
             >
-              <small>{article.price} €</small>
+              <small>
+                {standingBid.value} ETH / {standingBid.value * rate} €
+              </small>
             </Typography>
           </Typography>
+
+          {user && user === standingBid.user && <Winner />}
 
           <Typography variant="body2" color="textSecondary" component="p">
             {article.description}
@@ -84,16 +103,17 @@ export const Article = () => {
           <TextField
             label="Bid"
             type="number"
-            value={price}
-            onChange={e => setPrice(e.target.value)}
+            value={userBid}
+            onChange={e => setUserBid(e.target.value)}
             InputProps={{
-              endAdornment: <InputAdornment position="end">€</InputAdornment>
+              endAdornment: <InputAdornment position="end">ETH</InputAdornment>
             }}
             variant="filled"
+            disabled={isLoading}
           />
 
           <Typography variant="body1" color="textSecondary">
-            <small>{(price / rate).toFixed(6)} ETH</small>
+            <small>{userBid * rate} €</small>
           </Typography>
 
           <Button
@@ -103,6 +123,8 @@ export const Article = () => {
             color="primary"
             fullWidth
             disableElevation
+            onClick={onBid}
+            disabled={isLoading}
           >
             Bid
           </Button>

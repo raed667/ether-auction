@@ -1,5 +1,4 @@
 import React from "react";
-import uuidv4 from "uuid/v4";
 
 import {
   Typography,
@@ -11,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { DropzoneArea } from "material-ui-dropzone";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 
-import ipfs from "../../helpers/ipfs";
+import { listArticle } from "../../data";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,8 +30,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const AddArticle = () => {
+export const AddArticle = ({ accounts }) => {
   const classes = useStyles();
+  const user = accounts[0];
 
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -56,35 +56,13 @@ export const AddArticle = () => {
       return;
     }
     setSubmitting(true);
-    const id = uuidv4();
-    const articleIpfs = {
-      id,
-      image: null,
-      data: null
-    };
-    const files = [
-      {
-        path: "/article.json",
-        content: JSON.stringify({ title, description })
-      },
-      {
-        path: "/article.png",
-        content: image
-      }
-    ];
-
-    for await (const result of ipfs.add(files)) {
-      console.log(result);
-      if (result.path === "article.png") {
-        articleIpfs.image = result.cid.string;
-      }
-      if (result.path === "article.json") {
-        articleIpfs.data = result.cid.string;
-      }
+    try {
+      const response = await listArticle(title, description, image, user);
+      console.log({ response });
+    } catch (err) {
+      console.warn(err);
     }
-    console.log("FINISHED", { articleIpfs });
     setSubmitting(false);
-    // Call contract
   };
 
   return (

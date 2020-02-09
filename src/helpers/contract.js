@@ -1,35 +1,143 @@
 import web3 from "./web3";
 
-const address = "0xb84b12e953f5bcf01b05f926728e855f2d4a67a9";
+export const address = "0x9A48d2f6915B00F38BA4dCaa075917BC0C259863";
 
-//use the ABI from your contract
-const abi = [
+// ABI from contract
+export const abi = [
   {
-    constant: true,
-    inputs: [],
-    name: "getHash",
-    outputs: [
+    inputs: [
       {
-        name: "x",
+        internalType: "string",
+        name: "_data",
+        type: "string"
+      },
+      {
+        internalType: "string",
+        name: "_img",
         type: "string"
       }
     ],
-    payable: false,
+    name: "addArticle",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_article",
+        type: "uint256"
+      }
+    ],
+    name: "addBid",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function"
+  },
+  {
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor"
+  },
+  {
+    inputs: [],
+    name: "articleCount",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
     stateMutability: "view",
     type: "function"
   },
   {
-    constant: false,
     inputs: [
       {
-        name: "x",
-        type: "string"
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
       }
     ],
-    name: "sendHash",
-    outputs: [],
-    payable: false,
-    stateMutability: "nonpayable",
+    name: "articles",
+    outputs: [
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address"
+      },
+      {
+        internalType: "string",
+        name: "img",
+        type: "string"
+      },
+      {
+        internalType: "string",
+        name: "data",
+        type: "string"
+      },
+      {
+        internalType: "uint256",
+        name: "end",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256"
+      }
+    ],
+    name: "bids",
+    outputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "articleId",
+        type: "uint256"
+      },
+      {
+        internalType: "uint256",
+        name: "value",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
+    type: "function"
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_article",
+        type: "uint256"
+      }
+    ],
+    name: "getWinner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "winner_",
+        type: "address"
+      },
+      {
+        internalType: "uint256",
+        name: "standingBid_",
+        type: "uint256"
+      }
+    ],
+    stateMutability: "view",
     type: "function"
   }
 ];

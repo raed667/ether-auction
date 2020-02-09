@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Typography, Grid, Button } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
+import { Typography, Grid, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { ArticleCard } from "../../components/ArticleCard";
@@ -15,24 +15,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const HomePage = () => {
+export const HomePage = ({ articles }) => {
   const classes = useStyles();
-  const [articles, setArticles] = React.useState([]);
-
-  const getAllArticles = async () => {
-    /* Get all articles here */
-    const dummyArticle = {
-      id: "b934dbe0-296b-464c-9d6d-2737bc76af70",
-      ipfsData: "QmZkRSVbfgQa9ZQYZs8skSnsSGuUcvMGGVG7RnjWm3D84c",
-      ipfsImage: "QmcANGfjm6vPCpxTtVRPGgzWXvZkCSVxqzHeyGwQnhyPJc"
-    };
-
-    setArticles([dummyArticle]);
-  };
-
-  React.useEffect(() => {
-    getAllArticles();
-  }, []);
 
   return (
     <div className="homepage">
