@@ -2,7 +2,11 @@
 
 > Auction app based on Ethereum, IPFS and React
 
-## How to use
+## Setup
+
+- Setup [Metamask addon](https://metamask.io/).
+
+## How to use in development
 
 ```sh
 $ yarn
