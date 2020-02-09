@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import contract from "../helpers/contract";
+import { abi, address } from "../helpers/contract";
 import { IPFS_URL } from "../helpers/ipfs";
 import web3 from "../helpers/web3";
 import ipfs from "../helpers/ipfs";
@@ -15,6 +15,7 @@ const getArticleData = async ipfsData => {
 const getArticleImageLink = ipfsImage => IPFS_URL + ipfsImage;
 
 /** Contract */
+const contract = web3 && web3.eth && new web3.eth.Contract(abi, address);
 
 export const getNumberOfArticles = async () => {
   try {
