@@ -80,11 +80,27 @@ contract Auction {
             }
         }
     }
+        
+    modifier notWinner(uint _article) {
+        (address winner, uint standingBid_) =  getWinner(_article);
+        if (msg.sender != winner) _;
+    }
 
 
-   /* function getMoneyBack(uint _article) public {
-        require(msg.sender != winner(_article),"Winner cant get money back.");
-        require(articles[_article].end > now ,"Auction hasnt closed yet");
-    }*/
+    function getMoneyBack(uint _article) public payable notWinner(_article) {
+        require(articles[_article].end > now , "Auction hasnt closed yet");
+        
+        uint amount = 0;
+        
+        for (uint b = 0; b < bids.length; b++) {
+            if (bids[b].articleId == _article && bids[b].user == msg.sender) {
+                amount = bids[b].value;
+                break;
+            }
+        }
+        
+        
+        msg.sender.transfer(amount);
+    }
 
 }
