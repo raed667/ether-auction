@@ -18,7 +18,7 @@ Here is the [link to the slides](https://docs.google.com/presentation/d/1xIQnX_o
 
 ## To run the project locally
 
-- Clone or download this repository locally and and then run:
+Clone or download this repository locally and and then run:
 
 ```sh
 $ yarn
