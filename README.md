@@ -13,7 +13,7 @@ Here is the [link to the slides](https://docs.google.com/presentation/d/1xIQnX_o
 - Setup [Metamask addon](https://metamask.io/) and create an account.
 - On Metamask, select `Kovan test network`.
 - Visit https://ether-auction.now.sh and the home-page shouold display a number of items.
-- Go to https://faucet.kovan.network and using your Github account you can get free coins.
+- Go to https://faucet.kovan.network and using your Github account (and the address of your wallet on Metamask) you can get free coins.
 
 
 ## To run the project locally
