@@ -1,4 +1,6 @@
 pragma solidity >=0.4.22 <0.7.0;
+pragma experimental ABIEncoderV2;
+
 
 struct Bid {
     address user;
@@ -20,6 +22,10 @@ contract Auction {
     Article[] public articles;
     Bid[] public bids;
     uint public articleCount ;
+    
+    // Events
+    event articleAdded(Article newArticle);
+
 
     constructor() public {
     //    owner = msg.sender;
@@ -27,13 +33,17 @@ contract Auction {
     }
 
     function addArticle(string memory  _data,  string memory _img) public {
-        articles.push(Article({
+         Article memory newArticle = Article({
             owner: msg.sender,
             end: now + 1 hours,
             img: _img,
             data: _data
-        }));
+        });
+        
+        articles.push(newArticle);
         articleCount++;
+        
+        emit articleAdded(newArticle);
     }
 
     function addBid(uint _article ) payable public {
