@@ -5,12 +5,13 @@ import { Typography, Button, Grid, TextField, InputAdornment } from '@material-u
 import Alert from '@material-ui/lab/Alert'
 import ShoppingIcon from '@material-ui/icons/AddShoppingCart'
 import ScheduleIcon from '@material-ui/icons/Schedule'
+import MoneyOffIcon from '@material-ui/icons/MoneyOff'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { Winner } from '../../components/Winner'
 
 import { getRate } from '../../helpers/rates'
-import { getStandingBid, bidOnArticle } from '../../data'
+import { getStandingBid, bidOnArticle, getMoneyBack } from '../../data'
 
 const useStyles = makeStyles(theme => ({
   img: {
@@ -68,9 +69,21 @@ export const Article = ({ article, accounts }) => {
     setIsLoading(false)
   }
 
+  const onRefund = async () => {
+    setStatus(null)
+    const result = await getMoneyBack(id, user)
+    if (result.transactionHash) {
+      setStatus({
+        status: 'success',
+        message: 'You got your money back: ' + result.transactionHash,
+      })
+    }
+  }
+
   if (!article) return <div>Loading</div>
 
-  const isClosed = article.end <= Date.now()
+  const isClosed = article.end <= new Date()
+  const isWinner = user && user === standingBid.user
 
   return (
     <div>
@@ -89,12 +102,16 @@ export const Article = ({ article, accounts }) => {
             </Typography>
           </Typography>
 
-          <Typography gutterBottom color="textSecondary" className={classes.wrapIcon}>
+          <Typography
+            gutterBottom
+            color={isClosed ? 'error' : 'textSecondary'}
+            className={classes.wrapIcon}
+          >
             <ScheduleIcon />
             {article.end.toLocaleString('en-UK')}
           </Typography>
 
-          {user && user === standingBid.user && <Winner />}
+          {isWinner && <Winner />}
 
           <Typography variant="body2" color="textSecondary" component="p">
             {article.description}
@@ -126,6 +143,19 @@ export const Article = ({ article, accounts }) => {
             disabled={isLoading || isClosed}
           >
             Bid
+          </Button>
+
+          <Button
+            className={classes.button}
+            startIcon={<MoneyOffIcon />}
+            variant="contained"
+            color="primary"
+            fullWidth
+            disableElevation
+            onClick={onRefund}
+            disabled={!isClosed || isWinner}
+          >
+            Get money back
           </Button>
         </Grid>
       </Grid>

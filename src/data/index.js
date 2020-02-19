@@ -60,6 +60,7 @@ export const bidOnArticle = async (articleId, valueETH, user) => {
     from: user,
     value: valueWei,
   })
+
   return result
 }
 
@@ -97,8 +98,17 @@ const uploadArticleIPFS = async (title, description, imageFile) => {
 
 export const listArticle = async (title, description, imageFile, user) => {
   const article = await uploadArticleIPFS(title, description, imageFile)
-  const response = await contract.methods.addArticle(article.data, article.image).send({
+  const result = await contract.methods.addArticle(article.data, article.image).send({
     from: user,
   })
-  return response
+
+  return result
+}
+
+export const getMoneyBack = async (articleId, user) => {
+  const result = await contract.methods.getMoneyBack(articleId).send({
+    from: user,
+  })
+
+  return result
 }
