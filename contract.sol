@@ -17,18 +17,15 @@ struct Article {
 
 contract Auction {
 
-    // address private owner;
-
     Article[] public articles;
     Bid[] public bids;
     uint public articleCount ;
-    
+
     // Events
     event articleAdded(Article newArticle);
-
+    event userRefund(address user, uint amount);
 
     constructor() public {
-    //    owner = msg.sender;
         articleCount = 0;
     }
 
@@ -39,10 +36,10 @@ contract Auction {
             img: _img,
             data: _data
         });
-        
+
         articles.push(newArticle);
         articleCount++;
-        
+
         emit articleAdded(newArticle);
     }
 
@@ -80,26 +77,25 @@ contract Auction {
             }
         }
     }
-        
+
     modifier notWinner(uint _article) {
         (address winner, uint standingBid_) =  getWinner(_article);
         if (msg.sender != winner) _;
     }
 
 
-    function getMoneyBack(uint _article) public payable notWinner(_article) {
-        require(articles[_article].end > now , "Auction hasnt closed yet");
-        
-        uint amount = 0;
-        
+    function getMoneyBack(uint _article) public payable {
+      //   require(articles[_article].end > now , "Auction hasnt closed yet");
+
+        uint amount = 42;
+
         for (uint b = 0; b < bids.length; b++) {
             if (bids[b].articleId == _article && bids[b].user == msg.sender) {
                 amount = bids[b].value;
-                break;
             }
         }
-        
-        
+
+        emit userRefund(msg.sender, amount);
         msg.sender.transfer(amount);
     }
 
