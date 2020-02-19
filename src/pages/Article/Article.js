@@ -1,75 +1,76 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React from 'react'
+import { useParams } from 'react-router-dom'
 
-import {
-  Typography,
-  Button,
-  Grid,
-  TextField,
-  InputAdornment
-} from "@material-ui/core";
-import Alert from "@material-ui/lab/Alert";
-import Icon from "@material-ui/icons/AddShoppingCart";
-import { makeStyles } from "@material-ui/core/styles";
+import { Typography, Button, Grid, TextField, InputAdornment } from '@material-ui/core'
+import Alert from '@material-ui/lab/Alert'
+import ShoppingIcon from '@material-ui/icons/AddShoppingCart'
+import ScheduleIcon from '@material-ui/icons/Schedule'
+import { makeStyles } from '@material-ui/core/styles'
 
-import { Winner } from "../../components/Winner";
+import { Winner } from '../../components/Winner'
 
-import { getRate } from "../../helpers/rates";
-import { getStandingBid, bidOnArticle } from "../../data";
+import { getRate } from '../../helpers/rates'
+import { getStandingBid, bidOnArticle } from '../../data'
 
 const useStyles = makeStyles(theme => ({
   img: {
-    width: "100%"
+    width: '100%',
   },
   button: {
     marginTop: 8,
-    borderRadius: 0
-  }
-}));
+    borderRadius: 0,
+  },
+  wrapIcon: {
+    verticalAlign: 'middle',
+    display: 'inline-flex',
+  },
+}))
 
 export const Article = ({ article, accounts }) => {
-  const classes = useStyles();
-  const { id } = useParams();
-  const user = accounts[0];
+  const classes = useStyles()
+  const { id } = useParams()
+  const user = accounts[0]
 
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [status, setStatus] = React.useState(null);
-  const [userBid, setUserBid] = React.useState(0);
-  const [rate, setRate] = React.useState(1);
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [status, setStatus] = React.useState(null)
+  const [userBid, setUserBid] = React.useState(0)
+  const [rate, setRate] = React.useState(1)
 
   const [standingBid, setStandingBid] = React.useState({
     user: null,
-    value: 0
-  });
+    value: 0,
+  })
 
   React.useEffect(() => {
-    getRate().then(r => setRate(r));
+    getRate().then(r => setRate(r))
     getStandingBid(id).then(bid => {
       if (bid) {
-        setStandingBid(bid);
-        setUserBid(bid.value);
+        setStandingBid(bid)
+        setUserBid(bid.value)
       }
-    });
-  }, [id]);
+    })
+  }, [id])
 
   const onBid = async () => {
-    setIsLoading(true);
-    setStatus(null);
+    setIsLoading(true)
+    setStatus(null)
     try {
-      const result = await bidOnArticle(id, userBid, user);
+      const result = await bidOnArticle(id, userBid, user)
       if (result.transactionHash) {
         setStatus({
-          status: "success",
-          message: "Bid success: " + result.transactionHash
-        });
+          status: 'success',
+          message: 'Bid success: ' + result.transactionHash,
+        })
       }
     } catch (err) {
-      setStatus({ status: "error", message: err.message });
+      setStatus({ status: 'error', message: err.message })
     }
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
-  if (!article) return <div>Loading</div>;
+  if (!article) return <div>Loading</div>
+
+  const isClosed = article.end <= Date.now()
 
   return (
     <div>
@@ -78,26 +79,19 @@ export const Article = ({ article, accounts }) => {
         <Grid item md={8}>
           <img alt={article.title} className={classes.img} src={article.img} />
         </Grid>
-        <Grid
-          item
-          container
-          direction="column"
-          justify="flex-end"
-          alignItems="stretch"
-          md={3}
-        >
+        <Grid item container direction="column" justify="flex-end" alignItems="stretch" md={3}>
           <Typography gutterBottom variant="h5" component="h2">
-            {article.title}{" "}
-            <Typography
-              gutterBottom
-              variant="h6"
-              component="span"
-              color="textSecondary"
-            >
+            {article.title}{' '}
+            <Typography gutterBottom variant="h6" component="span" color="textSecondary">
               <small>
                 {standingBid.value} ETH / {standingBid.value * rate} €
               </small>
             </Typography>
+          </Typography>
+
+          <Typography gutterBottom color="textSecondary" className={classes.wrapIcon}>
+            <ScheduleIcon />
+            {article.end.toLocaleString('en-UK')}
           </Typography>
 
           {user && user === standingBid.user && <Winner />}
@@ -111,7 +105,7 @@ export const Article = ({ article, accounts }) => {
             value={userBid}
             onChange={e => setUserBid(e.target.value)}
             InputProps={{
-              endAdornment: <InputAdornment position="end">ETH</InputAdornment>
+              endAdornment: <InputAdornment position="end">ETH</InputAdornment>,
             }}
             variant="filled"
             disabled={isLoading}
@@ -123,18 +117,18 @@ export const Article = ({ article, accounts }) => {
 
           <Button
             className={classes.button}
-            startIcon={<Icon />}
+            startIcon={<ShoppingIcon />}
             variant="contained"
             color="primary"
             fullWidth
             disableElevation
             onClick={onBid}
-            disabled={isLoading}
+            disabled={isLoading || isClosed}
           >
             Bid
           </Button>
         </Grid>
       </Grid>
     </div>
-  );
-};
+  )
+}
