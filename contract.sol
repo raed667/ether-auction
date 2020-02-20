@@ -87,7 +87,7 @@ contract Auction {
     function getMoneyBack(uint _article) public payable {
       //   require(articles[_article].end > now , "Auction hasnt closed yet");
 
-        uint amount = 42;
+        uint amount = 420000;
 
         for (uint b = 0; b < bids.length; b++) {
             if (bids[b].articleId == _article && bids[b].user == msg.sender) {

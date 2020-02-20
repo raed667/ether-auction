@@ -89,10 +89,10 @@ export const Article = ({ article, accounts }) => {
     <div>
       {!!status && <Alert severity={status.status}>{status.message}</Alert>}
       <Grid container spacing={3}>
-        <Grid item md={8}>
+        <Grid item md={7}>
           <img alt={article.title} className={classes.img} src={article.img} />
         </Grid>
-        <Grid item container direction="column" justify="flex-end" alignItems="stretch" md={3}>
+        <Grid item md={4} container direction="column" justify="flex-end" alignItems="stretch">
           <Typography gutterBottom variant="h5" component="h2">
             {article.title}{' '}
             <Typography gutterBottom variant="h6" component="span" color="textSecondary">
@@ -153,7 +153,6 @@ export const Article = ({ article, accounts }) => {
             fullWidth
             disableElevation
             onClick={onRefund}
-            disabled={!isClosed || isWinner}
           >
             Get money back
           </Button>

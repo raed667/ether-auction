@@ -109,6 +109,6 @@ export const getMoneyBack = async (articleId, user) => {
   const result = await contract.methods.getMoneyBack(articleId).send({
     from: user,
   })
-
+  console.log({ result })
   return result
 }
