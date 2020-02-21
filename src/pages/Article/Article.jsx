@@ -123,7 +123,7 @@ export const Article = ({ article, accounts }) => {
             {article.end.toLocaleString('en-UK')}
           </Typography>
 
-          {isWinner ? <Winner /> : <Loser value={userPreviousBid} />}
+          {isWinner ? <Winner /> : <Loser currentBid={standingBid.value} value={userPreviousBid} />}
 
           <Typography variant="body2" color="textSecondary" component="p">
             {article.description}

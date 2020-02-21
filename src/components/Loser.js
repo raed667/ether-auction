@@ -10,9 +10,10 @@ const useStyles = makeStyles({
   },
 })
 
-export const Loser = ({ value }) => {
+export const Loser = ({ currentBid, value }) => {
   const classes = useStyles()
 
+  if (currentBid === '0') return null
   return (
     <Typography className={classes.text} variant="subtitle1" color="error" component="p">
       <SentimentVeryDissatisfiedIcon color="error" /> You have been overbid{' '}
