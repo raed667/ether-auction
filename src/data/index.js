@@ -109,6 +109,13 @@ export const getMoneyBack = async (articleId, user) => {
   const result = await contract.methods.getMoneyBack(articleId).send({
     from: user,
   })
-  console.log({ result })
   return result
+}
+
+export const getUserBid = async (articleId, user) => {
+  const result = await contract.methods.getCurrentBid(articleId).call({ from: user })
+
+  const value = web3.utils.fromWei(result, 'ether')
+
+  return value
 }

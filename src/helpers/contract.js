@@ -1,4 +1,4 @@
-export const address = '0x2896f2dEde8E873105288Ca41152105C251AEd3a'
+export const address = '0x3AB9C3ae6F685542Ba775411c99036b55f4E82E0'
 
 // ABI from contract
 export const abi = [
@@ -175,6 +175,25 @@ export const abi = [
       {
         internalType: 'uint256',
         name: 'value',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_article',
+        type: 'uint256',
+      },
+    ],
+    name: 'getCurrentBid',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: 'bidValue_',
         type: 'uint256',
       },
     ],

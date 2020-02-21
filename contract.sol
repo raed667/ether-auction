@@ -1,7 +1,6 @@
 pragma solidity >=0.4.22 <0.7.0;
 pragma experimental ABIEncoderV2;
 
-
 struct Bid {
     address user;
     uint articleId;
@@ -17,9 +16,10 @@ struct Article {
 
 contract Auction {
 
+    // Attributes
     Article[] public articles;
     Bid[] public bids;
-    uint public articleCount ;
+    uint public articleCount;
 
     // Events
     event articleAdded(Article newArticle);
@@ -31,10 +31,10 @@ contract Auction {
 
     function addArticle(string memory  _data,  string memory _img) public {
          Article memory newArticle = Article({
-            owner: msg.sender,
-            end: now + 1 hours,
             img: _img,
-            data: _data
+            data: _data,
+            owner: msg.sender,
+            end: now + 1 hours
         });
 
         articles.push(newArticle);
@@ -65,7 +65,6 @@ contract Auction {
         }
     }
 
-
     function getWinner(uint _article) public view returns (address winner_, uint standingBid_) {
         uint winningPrice = 0;
 
@@ -78,16 +77,13 @@ contract Auction {
         }
     }
 
-    modifier notWinner(uint _article) {
-        (address winner, uint standingBid_) =  getWinner(_article);
-        if (msg.sender != winner) _;
-    }
-
-
     function getMoneyBack(uint _article) public payable {
-      //   require(articles[_article].end > now , "Auction hasnt closed yet");
+      require(articleCount > _article , "Article does not exist");
 
-        uint amount = 420000;
+      Article memory article= articles[_article];
+      require(now < article.end, "Auction isn't closed yet");
+
+        uint amount = 0;
 
         for (uint b = 0; b < bids.length; b++) {
             if (bids[b].articleId == _article && bids[b].user == msg.sender) {
@@ -95,8 +91,17 @@ contract Auction {
             }
         }
 
+        require(amount > 0 , "You did not bid on this article");
         emit userRefund(msg.sender, amount);
         msg.sender.transfer(amount);
     }
 
+
+    function getCurrentBid(uint _article) public view returns (uint bidValue_) {
+        for (uint b = 0; b < bids.length; b++) {
+            if (bids[b].articleId == _article && bids[b].user == msg.sender) {
+                bidValue_ = bids[b].value;
+            }
+        }
+    }
 }

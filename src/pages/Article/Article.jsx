@@ -9,9 +9,10 @@ import MoneyOffIcon from '@material-ui/icons/MoneyOff'
 import { makeStyles } from '@material-ui/core/styles'
 
 import { Winner } from '../../components/Winner'
+import { Loser } from '../../components/Loser'
 
 import { getRate } from '../../helpers/rates'
-import { getStandingBid, bidOnArticle, getMoneyBack } from '../../data'
+import { getStandingBid, bidOnArticle, getMoneyBack, getUserBid } from '../../data'
 
 const useStyles = makeStyles(theme => ({
   img: {
@@ -34,6 +35,7 @@ export const Article = ({ article, accounts }) => {
 
   const [isLoading, setIsLoading] = React.useState(false)
   const [status, setStatus] = React.useState(null)
+  const [userPreviousBid, setUserPreviousBid] = React.useState(0)
   const [userBid, setUserBid] = React.useState(0)
   const [rate, setRate] = React.useState(1)
 
@@ -50,13 +52,16 @@ export const Article = ({ article, accounts }) => {
         setUserBid(bid.value)
       }
     })
-  }, [id])
+    if (user) getUserBid(id, user).then(value => setUserPreviousBid(value))
+  }, [id, user])
 
   const onBid = async () => {
     setIsLoading(true)
     setStatus(null)
     try {
-      const result = await bidOnArticle(id, userBid, user)
+      const bidValue = parseFloat(userBid) - parseFloat(userPreviousBid)
+
+      const result = await bidOnArticle(id, bidValue.toFixed(6), user)
       if (result.transactionHash) {
         setStatus({
           status: 'success',
@@ -71,11 +76,18 @@ export const Article = ({ article, accounts }) => {
 
   const onRefund = async () => {
     setStatus(null)
-    const result = await getMoneyBack(id, user)
-    if (result.transactionHash) {
+    try {
+      const result = await getMoneyBack(id, user)
+      if (result.transactionHash) {
+        setStatus({
+          status: 'success',
+          message: 'You got your money back: ' + result.transactionHash,
+        })
+      }
+    } catch (error) {
       setStatus({
-        status: 'success',
-        message: 'You got your money back: ' + result.transactionHash,
+        status: 'error',
+        message: 'Error: ' + error.message,
       })
     }
   }
@@ -111,7 +123,7 @@ export const Article = ({ article, accounts }) => {
             {article.end.toLocaleString('en-UK')}
           </Typography>
 
-          {isWinner && <Winner />}
+          {isWinner ? <Winner /> : <Loser value={userPreviousBid} />}
 
           <Typography variant="body2" color="textSecondary" component="p">
             {article.description}
